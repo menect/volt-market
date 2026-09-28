@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0E14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>VOLT — Pro</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="asset-info">
+        <div class="asset-icon">V</div>
+        <div class="header-copy">
+          <span class="ticker-label">VOLT</span>
+          <span class="asset-title">Volt Token</span>
+        </div>
+      </div>
+      <div class="live-players-badge">
+        <span class="pulse-dot"></span>
+        <span class="num" id="livePlayersCount">1 429</span>
+        <span class="live-players-label">playing</span>
+      </div>
+    </header>
+
+    <div class="view-container">
+      <div class="tab-view active" id="tabChart">
+        <div class="chart-section">
+          <div class="price-overlay">
+            <div class="price-value num" id="priceDisplay">$10.00</div>
+            <div class="price-change num idle" id="changeDisplay">LIVE MARKET • 24/7 STREAM</div>
+          </div>
+          <canvas id="chartCanvas"></canvas>
+          <div class="liq-overlay" id="liqOverlay" aria-hidden="true">LIQUIDATED</div>
+        </div>
+
+        <div class="timeframe-bar">
+          <div class="type-group">
+            <button class="type-btn active" id="btnTypeLine" data-chart-type="line" aria-label="Line chart">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </button>
+            <button class="type-btn" id="btnTypeCandle" data-chart-type="candle" aria-label="Candlestick chart">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="9" y1="2" x2="9" y2="22"></line><rect x="6" y="6" width="6" height="12" rx="1"></rect><line x1="17" y1="4" x2="17" y2="20"></line><rect x="14" y="9" width="6" height="6" rx="1"></rect></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="bottom-panel">
+          <div class="stake-panel">
+            <div class="stake-chips" id="stakeChips">
+              <button type="button" class="stake-chip" data-stake="5">5</button>
+              <button type="button" class="stake-chip" data-stake="10">10</button>
+              <button type="button" class="stake-chip" data-stake="20">20</button>
+              <button type="button" class="stake-chip" data-stake="100">100</button>
+            </div>
+
+            <div class="stepper-pill">
+              <button type="button" class="stake-step-btn" id="stakeMinusBtn" aria-label="Decrease stake">−</button>
+              <label class="stake-field">$<input class="stake-input" id="stakeInput" type="text" inputmode="decimal" maxlength="6" aria-label="Stake amount" value="1.00"></label>
+              <button type="button" class="stake-step-btn" id="stakePlusBtn" aria-label="Increase stake">+</button>
+            </div>
+
+            <div class="action-row" id="actionRow">
+              <button type="button" class="btn btn-primary" id="buyBtn">Buy ($1.00)</button>
+              <button type="button" class="btn btn-dca" id="dcaBtn" hidden>DCA ($1.00)</button>
+              <button type="button" class="btn btn-cashout" id="sellBtn" hidden>Cashout ($0.00)</button>
+              <div class="poff-layer" id="poffLayer" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="stat-item">
+              <span class="stat-label">Average Entry</span>
+              <span class="stat-value num" id="gavDisplay">—</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Total Stake</span>
+              <span class="stat-value num" id="stakeDisplay">—</span>
+            </div>
+            <div class="stat-item" id="profitCell">
+              <span class="stat-label">Profit</span>
+              <span class="stat-value num" id="peakDisplay">—</span>
+            </div>
+            <div class="stat-item" id="returnCell">
+              <span class="stat-label">Return</span>
+              <span class="stat-value num" id="pnlDisplay">0.00%</span>
+            </div>
+          </div>
+
+          <button type="button" class="share-trade-btn" id="shareBtn">Dela · Share Trade</button>
+        </div>
+      </div>
+
+      <div class="tab-view" id="tabChat">
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Write a message..." maxlength="240" />
+            <button class="chat-send-btn" id="chatSendBtn">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-view" id="tabLeaderboard">
+        <div class="leaderboard-container">
+          <div class="lb-header-title">Leaderboard</div>
+          <div class="lb-subtitle">Highest net profit in USD.</div>
+          <div class="lb-filter-bar">
+            <button class="lb-filter-btn active" data-lb-filter="today">Today</button>
+            <button class="lb-filter-btn" data-lb-filter="month">Month</button>
+            <button class="lb-filter-btn" data-lb-filter="year">Year</button>
+            <button class="lb-filter-btn" data-lb-filter="trades">Trades</button>
+          </div>
+          <div class="lb-list" id="leaderboardList"></div>
+        </div>
+      </div>
+
+      <div class="tab-view" id="tabStats">
+        <div class="stats-container">
+          <div class="lb-header-title">Stats</div>
+          <div class="lb-subtitle">Your trading performance.</div>
+          <div class="lb-filter-bar stats-filter-bar">
+            <button class="lb-filter-btn active" data-stats-filter="today">Idag</button>
+            <button class="lb-filter-btn" data-stats-filter="month">Månad</button>
+            <button class="lb-filter-btn" data-stats-filter="total">Totalt</button>
+          </div>
+
+          <div class="stats-list">
+            <div class="stats-row">
+              <span>Total Profit / Loss ($)</span>
+              <span class="num" id="stTotalProfit">+$0.00</span>
+            </div>
+            <div class="stats-row">
+              <span>Total Profit / Loss (%)</span>
+              <span class="num" id="stTotalPct">+0.00%</span>
+            </div>
+            <div class="stats-row">
+              <span>Best Day ($)</span>
+              <span class="num" id="stBestDay">—</span>
+            </div>
+            <div class="stats-row">
+              <span>Total Trades</span>
+              <span class="num" id="stTotalTrades">0</span>
+            </div>
+            <div class="stats-row">
+              <span>Win Rate (%)</span>
+              <span class="num" id="stWinRate">0.0%</span>
+            </div>
+          </div>
+
+          <button type="button" class="share-trade-btn" id="statsShareBtn">Dela · Share Stats</button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="tabChart">
+        <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.09-4-4L2 15.08l1.5 1.41z"/></svg>
+        <span>Market</span>
+      </button>
+      <button class="nav-item" data-tab="tabChat">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+        <span>Chat</span>
+      </button>
+      <button class="nav-item" data-tab="tabLeaderboard">
+        <svg viewBox="0 0 24 24"><path d="M16 11V3H8v8H2v10h20V11h-6zm-6-6h4v14h-4V5zm-6 8h4v6H4v-6zm16 6h-4v-4h4v4z"/></svg>
+        <span>Board</span>
+      </button>
+      <button class="nav-item" data-tab="tabStats">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
+        <span>Stats</span>
+      </button>
+    </nav>
+
+    <div class="modal-overlay" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+      <div class="share-box">
+        <div class="share-top">
+          <div class="share-brand">
+            <div class="asset-icon">V</div>
+            <h2 class="share-title" id="shareTitle">Today</h2>
+          </div>
+          <button type="button" class="share-close" id="closeShareModalBtn" aria-label="Stäng">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div class="share-toggle" role="tablist">
+          <button type="button" class="share-toggle-btn active" data-share-period="today" role="tab">Today</button>
+          <button type="button" class="share-toggle-btn" data-share-period="year" role="tab">Year</button>
+        </div>
+
+        <div class="share-card">
+          <div class="share-card-glow"></div>
+          <div class="share-hero">
+            <span class="share-label">Total värdeförändring</span>
+            <span class="share-hero-val num" id="shareHeroVal">+$0,00</span>
+          </div>
+          <div class="share-grid">
+            <div class="share-cell">
+              <span class="share-label">Utveckling i %</span>
+              <span class="share-val num" id="sharePctVal">+0,00%</span>
+            </div>
+            <div class="share-cell">
+              <span class="share-label">Utveckling i USD</span>
+              <span class="share-val num" id="shareUsdVal">+$0,00</span>
+            </div>
+          </div>
+          <div class="share-cell">
+            <span class="share-label">Värdepapper</span>
+            <span class="share-val">Volt Token (VOLT)</span>
+          </div>
+        </div>
+
+        <p class="share-note">Du delar bara din utveckling, inte ditt saldo.</p>
+
+        <div class="share-options">
+          <button type="button" class="share-btn brand-tg" data-share="telegram">
+            <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.28 7.72-6.97c.34-.31-.07-.48-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+            <span>Telegram</span>
+          </button>
+          <button type="button" class="share-btn brand-wa" data-share="whatsapp">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <span>WhatsApp</span>
+          </button>
+          <button type="button" class="share-btn brand-x" data-share="x">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span>X</span>
+          </button>
+          <button type="button" class="share-btn brand-ig" data-share="instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            <span>Instagram</span>
+          </button>
+        </div>
+
+        <div class="demo-link-row">
+          <a class="demo-link" id="demoLink" href="./" target="_blank" rel="noopener">Testa demot</a>
+          <button type="button" class="demo-copy-btn" id="copyDemoLinkBtn">Kopiera länk</button>
+        </div>
+        <p class="share-status" id="shareStatus" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
